@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Dino: Extinction Run</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="header">
+            <span class="title-tag">🦖 APEX DINO: EXTINCTION RUN</span>
+            <span class="controls-hint">[M] Mute Audio</span>
+        </header>
+
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="960" height="360"></canvas>
+        </div>
+
+        <div class="touch-controls">
+            <button class="touch-btn" id="btnDuck">▼ CROUCH</button>
+            <button class="touch-btn" id="btnRoar">⚡ ROAR</button>
+            <button class="touch-btn" id="btnJump">▲ JUMP</button>
+        </div>
+
+        <div class="instructions-grid">
+            <div class="key-card">
+                <span class="kbd">SPACE / ▲</span>
+                <span class="desc">Variable Leap (Hold for high)</span>
+            </div>
+            <div class="key-card">
+                <span class="kbd">▼ / S</span>
+                <span class="desc">Skid Crouch (Duck low flyers)</span>
+            </div>
+            <div class="key-card">
+                <span class="kbd">SHIFT / E</span>
+                <span class="desc">Apex Roar Shockwave</span>
+            </div>
+            <div class="key-card">
+                <span class="kbd">MEAT</span>
+                <span class="desc">Invulnerable Frenzy Shield</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="audio.js"></script>
+    <script src="sprites.js"></script>
+    <script src="game.js"></script>
+
+    <script>
+        // Hook touch buttons directly to game controls
+        const btnJump = document.getElementById('btnJump');
+        const btnDuck = document.getElementById('btnDuck');
+        const btnRoar = document.getElementById('btnRoar');
+
+        if (btnJump && btnDuck && btnRoar) {
+            btnJump.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (window.game) {
+                    if (window.game.state !== 'RUNNING') window.game.restart();
+                    window.game.keys.jump = true;
+                    window.game.dino.jumpBuffer = 7;
+                }
+            });
+            btnJump.addEventListener('touchend', () => {
+                if (window.game) {
+                    window.game.keys.jump = false;
+                    if (window.game.dino.vy < -4) window.game.dino.vy = -4;
+                }
+            });
+
+            btnDuck.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (window.game) window.game.keys.duck = true;
+            });
+            btnDuck.addEventListener('touchend', () => {
+                if (window.game) window.game.keys.duck = false;
+            });
+
+            btnRoar.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (window.game) window.game.triggerRoar();
+            });
+        }
+    </script>
+</body>
+</html>
